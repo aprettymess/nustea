@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Pallete {
   static const blackColor = Color.fromRGBO(1, 1, 1, 1);
   static const whiteColor = Colors.white;
-  static const bluishColor = Color.fromRGBO(26, 39, 45, 1);
+  static const greyColor = Color.fromRGBO(26, 39, 45, 1);
   static const darkGrayColor = Color.fromRGBO(18, 18, 18, 1);
   static var blueColor = Colors.blue.shade300;
   static var redColor = Colors.red.shade500;
@@ -11,7 +11,7 @@ class Pallete {
   // Themes
   static var darkModeAppTheme = ThemeData.dark().copyWith(
     scaffoldBackgroundColor: blackColor,
-    cardColor: bluishColor,
+    cardColor: greyColor,
     appBarTheme: const AppBarTheme(
       backgroundColor: darkGrayColor,
       iconTheme: IconThemeData(
@@ -29,7 +29,7 @@ class Pallete {
 
   static var lightModeAppTheme = ThemeData.light().copyWith(
     scaffoldBackgroundColor: whiteColor,
-    cardColor: bluishColor,
+    cardColor: greyColor,
     appBarTheme: const AppBarTheme(
       backgroundColor: whiteColor,
       elevation: 0,

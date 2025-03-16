@@ -19,7 +19,7 @@ class SignInButton extends StatelessWidget {
           ),
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Pallete.bluishColor,
+          backgroundColor: Pallete.greyColor,
           minimumSize: const Size(double.infinity, 50),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
