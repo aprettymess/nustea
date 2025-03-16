@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nustea/features/auth/screens/login_screen.dart';
+import 'package:nustea/features/community/screens/create_community_screen.dart';
 import 'package:nustea/features/home/screens/home_screen.dart';
 import 'package:routemaster/routemaster.dart';
 
@@ -9,4 +10,6 @@ final loggedOutRoute = RouteMap(routes: {
 
 final loggedInRoute = RouteMap(routes: {
   '/': (_) => MaterialPage<void>(child: HomeScreen()),
+  '/create-community': (_) =>
+      MaterialPage<void>(child: CreateCommunityScreen()),
 });
