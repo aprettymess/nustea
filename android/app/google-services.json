@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "209020443047",
+    "project_id": "nustea-7aba6",
+    "storage_bucket": "nustea-7aba6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:209020443047:android:5494e9ff3b60be080c3e82",
+        "android_client_info": {
+          "package_name": "com.example.nustea"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVYo3_zMM_fMTljDhdoIrVTmnjO1M8oEM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
