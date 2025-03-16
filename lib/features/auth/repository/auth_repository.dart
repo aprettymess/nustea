@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:fpdart/fpdart.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nustea/core/constants/constants.dart';
 import 'package:nustea/core/constants/firebase_constants.dart';
@@ -72,16 +72,14 @@ class AuthRepository {
           banner: Constants.bannerDefault,
           uid: userCredential.user!.uid,
           isAuthenticated: true,
-          karma: 0,
-          awards: [
-            'awesomeAns',
+          tc: 0,
+          medals: [
             'gold',
-            'platinum',
-            'helpful',
+            'silver',
+            'bronze',
+            'runnerup',
             'plusone',
-            'rocket',
             'thankyou',
-            'til',
           ],
         );
         await _users.doc(userCredential.user!.uid).set(userModel.toMap());
@@ -106,8 +104,8 @@ class AuthRepository {
         banner: Constants.bannerDefault,
         uid: userCredential.user!.uid,
         isAuthenticated: false,
-        karma: 0,
-        awards: [],
+        tc: 0,
+        medals: [],
       );
 
       await _users.doc(userCredential.user!.uid).set(userModel.toMap());

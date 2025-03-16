@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nustea/controller/auth_controller.dart';
 import 'package:nustea/core/constants/constants.dart';
 import 'package:nustea/theme/pallete.dart';
 
-class SignInButton extends StatelessWidget {
-  const SignInButton({super.key});
+class SignInButton extends ConsumerWidget {
+  final bool isFromLogin;
+  const SignInButton({super.key, this.isFromLogin = true});
+
+  void signInWithGoogle(BuildContext context, WidgetRef ref) {
+    ref
+        .read(authControllerProvider.notifier)
+        .signInWithGoogle(context, isFromLogin);
+  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.all(18.0),
       child: ElevatedButton.icon(
-        onPressed: () {},
+        onPressed: () => signInWithGoogle(context, ref),
         icon: Image.asset(Constants.googlePath, width: 45),
         label: const Text(
           'Continue with Google',

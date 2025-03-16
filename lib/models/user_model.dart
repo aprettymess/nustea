@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_this
+
 import 'package:flutter/foundation.dart';
 
 class UserModel {
@@ -6,16 +8,16 @@ class UserModel {
   final String banner;
   final String uid;
   final bool isAuthenticated; // if guest or not
-  final int karma;
-  final List<String> awards;
+  final int tc;
+  final List<String> medals;
   UserModel({
     required this.name,
     required this.profilePic,
     required this.banner,
     required this.uid,
     required this.isAuthenticated,
-    required this.karma,
-    required this.awards,
+    required this.tc,
+    required this.medals,
   });
 
   UserModel copyWith({
@@ -33,8 +35,8 @@ class UserModel {
       banner: banner ?? this.banner,
       uid: uid ?? this.uid,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
-      karma: karma ?? this.karma,
-      awards: awards ?? this.awards,
+      tc: karma ?? this.tc,
+      medals: awards ?? this.medals,
     );
   }
 
@@ -45,8 +47,8 @@ class UserModel {
       'banner': banner,
       'uid': uid,
       'isAuthenticated': isAuthenticated,
-      'karma': karma,
-      'awards': awards,
+      'karma': tc,
+      'awards': medals,
     };
   }
 
@@ -57,14 +59,14 @@ class UserModel {
       banner: map['banner'] ?? '',
       uid: map['uid'] ?? '',
       isAuthenticated: map['isAuthenticated'] ?? false,
-      karma: map['karma']?.toInt() ?? 0,
-      awards: List<String>.from(map['awards']),
+      tc: map['karma']?.toInt() ?? 0,
+      medals: List<String>.from(map['awards']),
     );
   }
 
   @override
   String toString() {
-    return 'UserModel(name: $name, profilePic: $profilePic, banner: $banner, uid: $uid, isAuthenticated: $isAuthenticated, karma: $karma, awards: $awards)';
+    return 'UserModel(name: $name, profilePic: $profilePic, banner: $banner, uid: $uid, isAuthenticated: $isAuthenticated, karma: $tc, awards: $medals)';
   }
 
   @override
@@ -77,8 +79,8 @@ class UserModel {
         other.banner == banner &&
         other.uid == uid &&
         other.isAuthenticated == isAuthenticated &&
-        other.karma == karma &&
-        listEquals(other.awards, awards);
+        other.tc == tc &&
+        listEquals(other.medals, medals);
   }
 
   @override
@@ -88,7 +90,7 @@ class UserModel {
         banner.hashCode ^
         uid.hashCode ^
         isAuthenticated.hashCode ^
-        karma.hashCode ^
-        awards.hashCode;
+        tc.hashCode ^
+        medals.hashCode;
   }
 }
