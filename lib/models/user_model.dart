@@ -26,8 +26,8 @@ class UserModel {
     String? banner,
     String? uid,
     bool? isAuthenticated,
-    int? karma,
-    List<String>? awards,
+    int? tc,
+    List<String>? medals,
   }) {
     return UserModel(
       name: name ?? this.name,
@@ -35,8 +35,8 @@ class UserModel {
       banner: banner ?? this.banner,
       uid: uid ?? this.uid,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
-      tc: karma ?? this.tc,
-      medals: awards ?? this.medals,
+      tc: tc ?? this.tc,
+      medals: medals ?? this.medals,
     );
   }
 
@@ -47,8 +47,8 @@ class UserModel {
       'banner': banner,
       'uid': uid,
       'isAuthenticated': isAuthenticated,
-      'karma': tc,
-      'awards': medals,
+      'tc': tc,
+      'medals': medals,
     };
   }
 
@@ -59,14 +59,14 @@ class UserModel {
       banner: map['banner'] ?? '',
       uid: map['uid'] ?? '',
       isAuthenticated: map['isAuthenticated'] ?? false,
-      tc: map['karma']?.toInt() ?? 0,
+      tc: map['tc']?.toInt() ?? 0,
       medals: List<String>.from(map['awards']),
     );
   }
 
   @override
   String toString() {
-    return 'UserModel(name: $name, profilePic: $profilePic, banner: $banner, uid: $uid, isAuthenticated: $isAuthenticated, karma: $tc, awards: $medals)';
+    return 'UserModel(name: $name, profilePic: $profilePic, banner: $banner, uid: $uid, isAuthenticated: $isAuthenticated, tc: $tc, medals: $medals)';
   }
 
   @override
