@@ -61,6 +61,8 @@ class _MyAppState extends ConsumerState<MyApp> {
               },
             ),
             routeInformationParser: const RoutemasterParser(),
+            backButtonDispatcher:
+                RootBackButtonDispatcher(), // added to handle back button presses
           ),
           error: (error, stackTrace) => ErrorText(error: error.toString()),
           loading: () => const Loader(),

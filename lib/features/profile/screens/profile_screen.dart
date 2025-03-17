@@ -1,22 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nustea/models/user_model.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
-final userProvider = Provider<UserModel?>((ref) {
-  final googleUser = GoogleSignIn().currentUser;
-  return googleUser != null
-      ? UserModel(
-          name: googleUser.displayName ?? 'Guest',
-          profilePic: googleUser.photoUrl ?? '',
-          banner: '',
-          uid: googleUser.id,
-          isAuthenticated: true,
-          tc: 0,
-          medals: [],
-        )
-      : null;
-});
+final userProvider = StateProvider<UserModel?>((ref) => null);
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -45,7 +31,31 @@ class ProfileScreen extends ConsumerWidget {
                 ],
               ),
             )
-          : const Center(child: Text('User data not available')),
+          : Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.grey[300],
+                      child: const Icon(Icons.person,
+                          size: 50, color: Colors.white),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Guest User',
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text('Please log in to see your profile.'),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 }
