@@ -46,13 +46,11 @@ class LoginScreen extends ConsumerWidget {
                 const SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: ClipOval(
-                    child: Image.asset(
-                      Constants.loginEmotePath,
-                      height: 400,
-                      width: 400,
-                      fit: BoxFit.cover,
-                    ),
+                  child: Image.asset(
+                    Constants.transparentLoginEmotePath, // unchanged asset path
+                    height: 400,
+                    width: 400,
+                    fit: BoxFit.cover,
                   ),
                 ),
                 const SizedBox(height: 20),

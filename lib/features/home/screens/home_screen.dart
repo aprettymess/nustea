@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nustea/controller/auth_controller.dart';
 import 'package:nustea/features/home/drawers/community_list_drawer.dart';
+import 'package:routemaster/routemaster.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -32,7 +33,9 @@ class HomeScreen extends ConsumerWidget {
             icon: CircleAvatar(
               backgroundImage: NetworkImage(user!.profilePic),
             ),
-            onPressed: () {},
+            onPressed: () {
+              Routemaster.of(context).push('/profile');
+            },
           )
         ],
       ),
