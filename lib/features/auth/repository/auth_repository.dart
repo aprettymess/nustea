@@ -64,7 +64,6 @@ class AuthRepository {
       }
 
       UserModel userModel;
-
       if (userCredential.additionalUserInfo!.isNewUser) {
         userModel = UserModel(
           name: userCredential.user!.displayName ?? 'No Name',
@@ -119,8 +118,14 @@ class AuthRepository {
   }
 
   Stream<UserModel> getUserData(String uid) {
-    return _users.doc(uid).snapshots().map(
-        (event) => UserModel.fromMap(event.data() as Map<String, dynamic>));
+    return _users
+        .doc(uid)
+        .snapshots()
+        .where((event) => event.data() != null)
+        .map((event) {
+      final data = event.data()!;
+      return UserModel.fromMap(data as Map<String, dynamic>);
+    });
   }
 
   void logOut() async {

@@ -60,7 +60,7 @@ class UserModel {
       uid: map['uid'] ?? '',
       isAuthenticated: map['isAuthenticated'] ?? false,
       tc: map['tc']?.toInt() ?? 0,
-      medals: List<String>.from(map['awards']),
+      medals: List<String>.from(map['medals'] ?? []), // 👈 fixed key
     );
   }
 
