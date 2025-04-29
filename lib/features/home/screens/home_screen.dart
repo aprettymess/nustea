@@ -1,8 +1,8 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nustea/controller/auth_controller.dart';
 import 'package:routemaster/routemaster.dart';
-import 'dart:math';
 
 class PostItem {
   PostItem({
@@ -26,7 +26,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with TickerProviderStateMixin {
-  // Bounce animation for hamburger icon
   late final AnimationController _iconController;
   late final Animation<double> _iconAnimation;
   int _beatCount = 0;
@@ -42,7 +41,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void initState() {
     super.initState();
 
-    // Initialize bounce animation (4 beats then stop)
     _iconController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
@@ -62,8 +60,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             _iconController.forward();
           }
         }
-      });
-    _iconController.forward();
+      })
+      ..forward();
 
     _menuController = AnimationController(
       vsync: this,
@@ -74,8 +72,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       5,
       (i) => PostItem(
         id: i,
-        author: 'User ${i + 1}',
-        content: 'This is post number ${i + 1} in the NUSTea feed!',
+        author: 'User \${i + 1}',
+        content: 'This is post number \${i + 1} in the NUSTea feed!',
       ),
     );
 
@@ -86,23 +84,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
 
     _animations = _controllers
-        .map((ctrl) =>
-            Tween<Offset>(begin: const Offset(0, 0.25), end: Offset.zero)
-                .animate(
-              CurvedAnimation(parent: ctrl, curve: Curves.easeOut),
-            ))
+        .map((ctrl) => Tween<Offset>(
+              begin: const Offset(0, 0.25),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(parent: ctrl, curve: Curves.easeOut)))
         .toList();
 
     for (var i = 0; i < _controllers.length; i++) {
-      Future.delayed(
-          Duration(milliseconds: 100 * i), () => _controllers[i].forward());
+      Future.delayed(Duration(milliseconds: 100 * i), () {
+        _controllers[i].forward();
+      });
     }
   }
 
   @override
   void dispose() {
     _iconController.dispose();
-    for (final c in _controllers) c.dispose();
+    for (final c in _controllers) {
+      c.dispose();
+    }
     _menuController.dispose();
     super.dispose();
   }
@@ -127,6 +127,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -219,13 +222,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               ),
             ],
           ),
+          // Side Menu
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             top: kToolbarHeight,
-            left: _menuVisible ? 0 : -MediaQuery.of(context).size.width * 0.6,
+            left: _menuVisible ? 0 : -screenWidth * 0.6,
             child: Container(
-              width: MediaQuery.of(context).size.width * 0.6,
-              height: MediaQuery.of(context).size.height - kToolbarHeight,
+              width: screenWidth * 0.6,
+              height: screenHeight - kToolbarHeight,
               color: Colors.grey.shade900,
               child: SafeArea(
                 child: Column(
@@ -247,41 +251,77 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               ),
             ),
           ),
+          // Floating Action Button with curved path & hover scale
+          _CurvedPathFab(),
         ],
       ),
     );
   }
 }
 
-class _HoverAnimatedFAB extends StatefulWidget {
-  final VoidCallback onPressed;
-
-  const _HoverAnimatedFAB({required this.onPressed});
-
+class _CurvedPathFab extends StatefulWidget {
   @override
-  State<_HoverAnimatedFAB> createState() => _HoverAnimatedFABState();
+  State<_CurvedPathFab> createState() => _CurvedPathFabState();
 }
 
-class _HoverAnimatedFABState extends State<_HoverAnimatedFAB> {
+class _CurvedPathFabState extends State<_CurvedPathFab>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _fabController;
+  late final Animation<double> _fabAnim;
   bool _hovering = false;
 
   @override
+  void initState() {
+    super.initState();
+    _fabController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..forward();
+    _fabAnim = CurvedAnimation(parent: _fabController, curve: Curves.easeInOut);
+  }
+
+  @override
+  void dispose() {
+    _fabController.dispose();
+    super.dispose();
+  }
+
+  Offset _fabOffset(double t, Size size) {
+    final start = Offset(20, size.height - 80);
+    final end = Offset(size.width - 80, size.height - 80);
+    final control = Offset(size.width / 2, size.height - 200);
+    final x = (1 - t) * (1 - t) * start.dx +
+        2 * (1 - t) * t * control.dx +
+        t * t * end.dx;
+    final y = (1 - t) * (1 - t) * start.dy +
+        2 * (1 - t) * t * control.dy +
+        t * t * end.dy;
+    return Offset(x, y);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovering = true),
-      onExit: (_) => setState(() => _hovering = false),
-      child: TweenAnimationBuilder<double>(
-        duration: const Duration(milliseconds: 200),
-        tween: Tween<double>(begin: 1.0, end: _hovering ? 1.2 : 1.0),
-        builder: (context, scale, child) => Transform.scale(
-          scale: scale,
-          child: child,
-        ),
-        child: FloatingActionButton(
-          onPressed: widget.onPressed,
-          child: const Icon(Icons.add),
-        ),
-      ),
+    final size = MediaQuery.of(context).size;
+    return AnimatedBuilder(
+      animation: _fabAnim,
+      builder: (context, child) {
+        final pos = _fabOffset(_fabAnim.value, size);
+        return Positioned(
+          left: pos.dx,
+          top: pos.dy,
+          child: MouseRegion(
+            onEnter: (_) => setState(() => _hovering = true),
+            onExit: (_) => setState(() => _hovering = false),
+            child: Transform.scale(
+              scale: _hovering ? 1.2 : 1.0,
+              child: FloatingActionButton(
+                onPressed: () => Routemaster.of(context).push('/create-post'),
+                child: const Icon(Icons.add),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
