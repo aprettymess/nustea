@@ -1,4 +1,3 @@
-// features/home/profile/screens/profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nustea/models/user_model.dart';
@@ -14,24 +13,58 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
+  late final AnimationController _iconController;
+  late final Animation<double> _iconAnimation;
   late final AnimationController _morphController;
+
   bool _menuVisible = false;
+  int _beatCountProfile = 0;
 
   @override
   void initState() {
     super.initState();
+
+    // Bounce animation: 4 beats on load
+    _iconController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _iconAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(parent: _iconController, curve: Curves.easeInOut),
+    );
+    _iconController
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          _beatCountProfile++;
+          if (_beatCountProfile < 4) {
+            _iconController.reverse();
+          }
+        } else if (status == AnimationStatus.dismissed) {
+          if (_beatCountProfile < 4) {
+            _iconController.forward();
+          }
+        }
+      })
+      ..forward();
+
+    // Drawer morph animation
     _morphController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
   }
 
+  @override
+  void dispose() {
+    _iconController.dispose();
+    _morphController.dispose();
+    super.dispose();
+  }
+
   void _toggleMenu() {
-    setState(() {
-      _menuVisible = !_menuVisible;
-      _menuVisible ? _morphController.forward() : _morphController.reverse();
-    });
+    setState(() => _menuVisible = !_menuVisible);
+    _menuVisible ? _morphController.forward() : _morphController.reverse();
   }
 
   void _navigateHome() {
@@ -42,12 +75,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   void _navigateCreateCommunities() {
     _toggleMenu();
     Routemaster.of(context).push('/create-community');
-  }
-
-  @override
-  void dispose() {
-    _morphController.dispose();
-    super.dispose();
   }
 
   @override
@@ -62,12 +89,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
             children: [
               AppBar(
                 title: const Text('Profile'),
-                leading: IconButton(
-                  icon: AnimatedIcon(
-                    icon: AnimatedIcons.menu_close,
-                    progress: _morphController,
+                leading: ScaleTransition(
+                  scale: _iconAnimation,
+                  child: IconButton(
+                    icon: AnimatedIcon(
+                      icon: AnimatedIcons.menu_close,
+                      progress: _morphController,
+                    ),
+                    onPressed: _toggleMenu,
                   ),
-                  onPressed: _toggleMenu,
                 ),
               ),
               Expanded(
@@ -98,7 +128,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Hero(
                                 tag: 'profile-pic',
@@ -149,7 +178,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                       title: const Text('Communities',
                           style: TextStyle(color: Colors.white)),
                       onTap: _navigateCreateCommunities,
-                    )
+                    ),
                   ],
                 ),
               ),

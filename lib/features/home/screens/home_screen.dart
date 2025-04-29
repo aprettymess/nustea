@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nustea/controller/auth_controller.dart';
 import 'package:routemaster/routemaster.dart';
+import 'dart:math';
 
 class PostItem {
-  PostItem(
-      {required this.id,
-      required this.author,
-      required this.content,
-      this.liked = false});
+  PostItem({
+    required this.id,
+    required this.author,
+    required this.content,
+    this.liked = false,
+  });
   final int id;
   final String author;
   final String content;
@@ -24,6 +26,11 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with TickerProviderStateMixin {
+  // Bounce animation for hamburger icon
+  late final AnimationController _iconController;
+  late final Animation<double> _iconAnimation;
+  int _beatCount = 0;
+
   late final List<PostItem> _posts;
   late final List<AnimationController> _controllers;
   late final List<Animation<Offset>> _animations;
@@ -35,27 +42,55 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void initState() {
     super.initState();
 
+    // Initialize bounce animation (4 beats then stop)
+    _iconController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _iconAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(parent: _iconController, curve: Curves.easeInOut),
+    );
+    _iconController
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          _beatCount++;
+          if (_beatCount < 4) {
+            _iconController.reverse();
+          }
+        } else if (status == AnimationStatus.dismissed) {
+          if (_beatCount < 4) {
+            _iconController.forward();
+          }
+        }
+      });
+    _iconController.forward();
+
     _menuController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
 
     _posts = List.generate(
-        5,
-        (i) => PostItem(
-            id: i,
-            author: 'User ${i + 1}',
-            content: 'This is post number ${i + 1} in the NUSTea feed!'));
+      5,
+      (i) => PostItem(
+        id: i,
+        author: 'User ${i + 1}',
+        content: 'This is post number ${i + 1} in the NUSTea feed!',
+      ),
+    );
 
     _controllers = List.generate(
-        _posts.length,
-        (i) => AnimationController(
-            vsync: this, duration: const Duration(milliseconds: 400)));
+      _posts.length,
+      (i) => AnimationController(
+          vsync: this, duration: const Duration(milliseconds: 400)),
+    );
 
     _animations = _controllers
         .map((ctrl) =>
             Tween<Offset>(begin: const Offset(0, 0.25), end: Offset.zero)
-                .animate(CurvedAnimation(parent: ctrl, curve: Curves.easeOut)))
+                .animate(
+              CurvedAnimation(parent: ctrl, curve: Curves.easeOut),
+            ))
         .toList();
 
     for (var i = 0; i < _controllers.length; i++) {
@@ -66,6 +101,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   @override
   void dispose() {
+    _iconController.dispose();
     for (final c in _controllers) c.dispose();
     _menuController.dispose();
     super.dispose();
@@ -91,8 +127,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       body: Stack(
         children: [
@@ -100,21 +134,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             children: [
               AppBar(
                 title: const Text('NUSTea Feed'),
-                leading: IconButton(
-                  icon: AnimatedIcon(
-                    icon: AnimatedIcons.menu_close,
-                    progress: _menuController,
+                leading: ScaleTransition(
+                  scale: _iconAnimation,
+                  child: IconButton(
+                    icon: AnimatedIcon(
+                      icon: AnimatedIcons.menu_close,
+                      progress: _menuController,
+                    ),
+                    onPressed: _toggleMenu,
                   ),
-                  onPressed: _toggleMenu,
                 ),
                 actions: [
-                  Hero(
-                    tag: 'profile-pic',
-                    child: GestureDetector(
-                      onTap: () => Routemaster.of(context).push('/profile'),
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(user!.profilePic),
-                      ),
+                  GestureDetector(
+                    onTap: () => Routemaster.of(context).push('/profile'),
+                    child: CircleAvatar(
+                      backgroundImage: NetworkImage(user!.profilePic),
                     ),
                   ),
                 ],
@@ -147,16 +181,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                             title: Text(
                               post.author,
                               style: TextStyle(
-                                  color: post.liked
-                                      ? Colors.pink.shade200
-                                      : Colors.white),
+                                color: post.liked
+                                    ? Colors.pink.shade200
+                                    : Colors.white,
+                              ),
                             ),
                             subtitle: Text(
                               post.content,
                               style: TextStyle(
-                                  color: post.liked
-                                      ? Colors.pink.shade200
-                                      : Colors.white),
+                                color: post.liked
+                                    ? Colors.pink.shade200
+                                    : Colors.white,
+                              ),
                             ),
                             trailing: GestureDetector(
                               onTap: () =>
@@ -183,14 +219,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               ),
             ],
           ),
-
-          // Custom Side Menu
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             top: kToolbarHeight,
-            left: _menuVisible ? 0 : -screenWidth * 0.6,
+            left: _menuVisible ? 0 : -MediaQuery.of(context).size.width * 0.6,
             child: Container(
-              width: screenWidth * 0.6,
+              width: MediaQuery.of(context).size.width * 0.6,
               height: MediaQuery.of(context).size.height - kToolbarHeight,
               color: Colors.grey.shade900,
               child: SafeArea(
@@ -213,23 +247,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               ),
             ),
           ),
-
-          // Floating Action Button
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: ScaleTransition(
-              scale: Tween<double>(begin: 0, end: 1).animate(
-                CurvedAnimation(
-                    parent: _controllers.first, curve: Curves.elasticOut),
-              ),
-              child: FloatingActionButton(
-                onPressed: () => Routemaster.of(context).push('/create-post'),
-                child: const Icon(Icons.add),
-              ),
-            ),
-          ),
         ],
+      ),
+    );
+  }
+}
+
+class _HoverAnimatedFAB extends StatefulWidget {
+  final VoidCallback onPressed;
+
+  const _HoverAnimatedFAB({required this.onPressed});
+
+  @override
+  State<_HoverAnimatedFAB> createState() => _HoverAnimatedFABState();
+}
+
+class _HoverAnimatedFABState extends State<_HoverAnimatedFAB> {
+  bool _hovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovering = true),
+      onExit: (_) => setState(() => _hovering = false),
+      child: TweenAnimationBuilder<double>(
+        duration: const Duration(milliseconds: 200),
+        tween: Tween<double>(begin: 1.0, end: _hovering ? 1.2 : 1.0),
+        builder: (context, scale, child) => Transform.scale(
+          scale: scale,
+          child: child,
+        ),
+        child: FloatingActionButton(
+          onPressed: widget.onPressed,
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
