@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nustea/controller/auth_controller.dart';
 import 'package:routemaster/routemaster.dart';
+import '../../../core/common/side_menu.dart'; // 👈 Import the shared side menu
 
 class PostItem {
   PostItem({
@@ -41,6 +42,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void initState() {
     super.initState();
 
+    _menuVisible = false; // 👈 Ensure menu is closed when page opens
+
     _iconController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
@@ -66,14 +69,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     _menuController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
-    );
+    )..reset(); // 👈 Reset menu animation
 
     _posts = List.generate(
       5,
       (i) => PostItem(
         id: i,
-        author: 'User \${i + 1}',
-        content: 'This is post number \${i + 1} in the NUSTea feed!',
+        author: 'User ${i + 1}',
+        content: 'This is post number ${i + 1} in the NUSTea feed!',
       ),
     );
 
@@ -112,11 +115,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       _menuVisible = !_menuVisible;
       _menuVisible ? _menuController.forward() : _menuController.reverse();
     });
-  }
-
-  void _navigateCreateCommunities() {
-    _toggleMenu();
-    Routemaster.of(context).push('/create-community');
   }
 
   Future<void> _refreshFeed() async {
@@ -222,36 +220,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               ),
             ],
           ),
-          // Side Menu
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 300),
-            top: kToolbarHeight,
-            left: _menuVisible ? 0 : -screenWidth * 0.6,
-            child: Container(
-              width: screenWidth * 0.6,
-              height: screenHeight - kToolbarHeight,
-              color: Colors.grey.shade900,
-              child: SafeArea(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.group, color: Colors.white),
-                      title: const Text('Communities',
-                          style: TextStyle(color: Colors.white)),
-                      onTap: _navigateCreateCommunities,
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.home, color: Colors.white),
-                      title: const Text('Home',
-                          style: TextStyle(color: Colors.white)),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          SideMenu(
+            menuVisible: _menuVisible,
+            screenWidth: screenWidth,
+            screenHeight: screenHeight,
+            animationController: _menuController,
+            isHomeFirst: true,
           ),
-          // Floating Action Button with curved path & hover scale
           _CurvedPathFab(),
         ],
       ),

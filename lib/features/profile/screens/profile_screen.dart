@@ -1,7 +1,9 @@
+// Updated profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nustea/models/user_model.dart';
 import 'package:routemaster/routemaster.dart';
+import '../../../core/common/side_menu.dart';
 
 final userProvider = StateProvider<UserModel?>((ref) => null);
 
@@ -25,7 +27,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   void initState() {
     super.initState();
 
-    // Bounce animation: 4 beats on load
     _iconController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
@@ -48,11 +49,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
       })
       ..forward();
 
-    // Drawer morph animation
     _morphController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
-    );
+    )..reset();
   }
 
   @override
@@ -67,20 +67,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     _menuVisible ? _morphController.forward() : _morphController.reverse();
   }
 
-  void _navigateHome() {
-    _toggleMenu();
-    Routemaster.of(context).push('/');
-  }
-
-  void _navigateCreateCommunities() {
-    _toggleMenu();
-    Routemaster.of(context).push('/create-community');
-  }
-
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       body: Stack(
@@ -153,36 +144,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
               ),
             ],
           ),
-
-          // Custom Side Menu
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 300),
-            top: kToolbarHeight,
-            left: _menuVisible ? 0 : -screenWidth * 0.6,
-            child: Container(
-              width: screenWidth * 0.6,
-              height: MediaQuery.of(context).size.height - kToolbarHeight,
-              color: Colors.grey.shade900,
-              child: SafeArea(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.home, color: Colors.white),
-                      title: const Text('Home',
-                          style: TextStyle(color: Colors.white)),
-                      onTap: _navigateHome,
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.group, color: Colors.white),
-                      title: const Text('Communities',
-                          style: TextStyle(color: Colors.white)),
-                      onTap: _navigateCreateCommunities,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          SideMenu(
+            menuVisible: _menuVisible,
+            screenWidth: screenWidth,
+            screenHeight: screenHeight,
+            animationController: _morphController,
+            isHomeFirst: false,
           ),
         ],
       ),
