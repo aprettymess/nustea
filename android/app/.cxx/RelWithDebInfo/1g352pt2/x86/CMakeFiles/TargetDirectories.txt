@@ -1,0 +1,2 @@
+C:/Users/mrami/Documents/MAD/NUSTea/nustea/android/app/.cxx/RelWithDebInfo/1g352pt2/x86/CMakeFiles/edit_cache.dir
+C:/Users/mrami/Documents/MAD/NUSTea/nustea/android/app/.cxx/RelWithDebInfo/1g352pt2/x86/CMakeFiles/rebuild_cache.dir

@@ -1,9 +1,9 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nustea/controller/auth_controller.dart';
+import 'package:nustea/features/home/drawers/community_list_drawer.dart';
 import 'package:routemaster/routemaster.dart';
-import '../../../core/common/side_menu.dart'; // 👈 Import the shared side menu
+import '../../../core/common/side_menu.dart';
 
 class PostItem {
   PostItem({
@@ -230,6 +230,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           _CurvedPathFab(),
         ],
       ),
+      drawer: const CommunityListDrawer(),
     );
   }
 }
