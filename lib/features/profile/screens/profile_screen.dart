@@ -2,13 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nustea/models/user_model.dart';
-import 'package:routemaster/routemaster.dart';
 import '../../../core/common/side_menu.dart';
 
 final userProvider = StateProvider<UserModel?>((ref) => null);
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   @override
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();

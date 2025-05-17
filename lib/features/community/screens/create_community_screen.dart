@@ -7,7 +7,7 @@ import '../../../core/common/side_menu.dart';
 final userProvider = StateProvider<UserModel?>((ref) => null);
 
 class CreateCommunityScreen extends ConsumerStatefulWidget {
-  const CreateCommunityScreen({Key? key}) : super(key: key);
+  const CreateCommunityScreen({super.key});
 
   @override
   ConsumerState<CreateCommunityScreen> createState() =>
