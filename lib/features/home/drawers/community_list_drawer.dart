@@ -32,8 +32,10 @@ class CommunityListDrawer extends ConsumerWidget {
                       return ListTile(
                         leading: CircleAvatar(
                           backgroundImage: NetworkImage(community.avatar),
+                          backgroundColor: Colors.transparent,
                         ),
                         title: Text('n/${community.name}'),
+                        onTap: () {},
                       );
                     },
                   ),
