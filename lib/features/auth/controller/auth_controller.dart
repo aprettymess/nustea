@@ -35,9 +35,12 @@ class AuthController extends StateNotifier<bool> {
   Stream<User?> get authStateChange => _authRepository.authStateChange;
 
   void signInWithGoogle(BuildContext context, bool isFromLogin) async {
+    final mounted = context.mounted; // Cache before await
     state = true;
     final user = await _authRepository.signInWithGoogle(isFromLogin);
     state = false;
+
+    if (!mounted) return; // Don't do anything if widget is gone
     user.fold(
       (l) => showSnackBar(context, l.message),
       (userModel) =>

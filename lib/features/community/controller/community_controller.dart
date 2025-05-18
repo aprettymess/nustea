@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nustea/controller/auth_controller.dart';
 import 'package:nustea/core/constants/constants.dart';
 import 'package:nustea/core/utils.dart';
+import 'package:nustea/features/auth/controller/auth_controller.dart';
 import 'package:nustea/features/community/repository/community_repository.dart';
 import 'package:nustea/models/community_model.dart';
 import 'package:routemaster/routemaster.dart';

@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nustea/controller/auth_controller.dart';
 import 'package:nustea/core/common/error_text.dart';
 import 'package:nustea/core/common/loader.dart';
+import 'package:nustea/features/auth/controller/auth_controller.dart';
 import 'package:nustea/models/user_model.dart';
 import 'package:nustea/router.dart';
 import 'package:nustea/theme/pallete.dart';
