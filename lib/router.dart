@@ -6,7 +6,7 @@ import 'package:nustea/features/profile/screens/profile_screen.dart';
 import 'package:routemaster/routemaster.dart';
 
 final loggedOutRoute = RouteMap(routes: {
-  '/': (_) => MaterialPage<void>(child: LoginScreen()),
+  '/': (_) => const MaterialPage<void>(child: LoginScreen()),
 });
 
 final loggedInRoute = RouteMap(routes: {

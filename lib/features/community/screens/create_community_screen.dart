@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nustea/core/common/loader.dart';
+import 'package:nustea/features/auth/controller/auth_controller.dart';
 import 'package:nustea/features/community/controller/community_controller.dart';
-import 'package:nustea/models/user_model.dart';
 import 'package:routemaster/routemaster.dart';
 import '../../../core/common/side_menu.dart';
-
-final userProvider = StateProvider<UserModel?>((ref) => null);
 
 class CreateCommunityScreen extends ConsumerStatefulWidget {
   const CreateCommunityScreen({super.key});

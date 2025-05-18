@@ -1,13 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nustea/core/constants/constants.dart';
 import 'package:nustea/core/constants/firebase_constants.dart';
-import 'package:nustea/core/providers/firebase_providers.dart';
 import 'package:nustea/core/failure.dart';
+import 'package:nustea/core/providers/firebase_providers.dart';
 import 'package:nustea/core/type_defs.dart';
 import 'package:nustea/models/user_model.dart';
 
@@ -37,49 +36,29 @@ class AuthRepository {
 
   Stream<User?> get authStateChange => _auth.authStateChanges();
 
-  FutureEither<UserModel> signInWithGoogle(bool isFromLogin) async {
+  FutureEither<UserModel> signInWithGoogle() async {
     try {
-      UserCredential userCredential;
-      if (kIsWeb) {
-        GoogleAuthProvider googleProvider = GoogleAuthProvider();
-        googleProvider
-            .addScope('https://www.googleapis.com/auth/contacts.readonly');
-        userCredential = await _auth.signInWithPopup(googleProvider);
-      } else {
-        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
-        final googleAuth = await googleUser?.authentication;
+      final googleAuth = await googleUser?.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
 
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth?.accessToken,
-          idToken: googleAuth?.idToken,
-        );
-
-        if (isFromLogin) {
-          userCredential = await _auth.signInWithCredential(credential);
-        } else {
-          userCredential =
-              await _auth.currentUser!.linkWithCredential(credential);
-        }
-      }
-
+      UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
       UserModel userModel;
+
       if (userCredential.additionalUserInfo!.isNewUser) {
         userModel = UserModel(
-          name: userCredential.user!.displayName ?? 'No Name',
+          name: userCredential.user!.displayName ?? 'Unnammed',
           profilePic: userCredential.user!.photoURL ?? Constants.avatarDefault,
           banner: Constants.bannerDefault,
           uid: userCredential.user!.uid,
           isAuthenticated: true,
           tc: 0,
-          medals: [
-            'gold',
-            'silver',
-            'bronze',
-            'runnerup',
-            'plusone',
-            'thankyou',
-          ],
+          medals: [],
         );
         await _users.doc(userCredential.user!.uid).set(userModel.toMap());
       } else {
@@ -93,43 +72,8 @@ class AuthRepository {
     }
   }
 
-  FutureEither<UserModel> signInAsGuest() async {
-    try {
-      var userCredential = await _auth.signInAnonymously();
-
-      UserModel userModel = UserModel(
-        name: 'Guest',
-        profilePic: Constants.avatarDefault,
-        banner: Constants.bannerDefault,
-        uid: userCredential.user!.uid,
-        isAuthenticated: false,
-        tc: 0,
-        medals: [],
-      );
-
-      await _users.doc(userCredential.user!.uid).set(userModel.toMap());
-
-      return right(userModel);
-    } on FirebaseException catch (e) {
-      throw e.message!;
-    } catch (e) {
-      return left(Failure(e.toString()));
-    }
-  }
-
   Stream<UserModel> getUserData(String uid) {
-    return _users
-        .doc(uid)
-        .snapshots()
-        .where((event) => event.data() != null)
-        .map((event) {
-      final data = event.data()!;
-      return UserModel.fromMap(data as Map<String, dynamic>);
-    });
-  }
-
-  void logOut() async {
-    await _googleSignIn.signOut();
-    await _auth.signOut();
+    return _users.doc(uid).snapshots().map(
+        (event) => UserModel.fromMap(event.data() as Map<String, dynamic>));
   }
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nustea/controller/auth_controller.dart';
 import 'package:nustea/core/common/loader.dart';
 import 'package:nustea/core/common/sign_in_button.dart';
 import 'package:nustea/core/constants/constants.dart';
+import 'package:nustea/features/auth/controller/auth_controller.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
