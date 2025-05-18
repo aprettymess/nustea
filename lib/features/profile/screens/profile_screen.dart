@@ -1,6 +1,7 @@
 // Updated profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nustea/core/utils/cached_image.dart';
 import 'package:nustea/models/user_model.dart';
 import '../../../core/common/side_menu.dart';
 
@@ -99,9 +100,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                           children: [
                             Hero(
                               tag: 'profile-pic',
-                              child: CircleAvatar(
+                              child: CachedImageUtils.profileAvatar(
+                                imageUrl: user.profilePic,
                                 radius: 50,
-                                backgroundImage: NetworkImage(user.profilePic),
                               ),
                             ),
                             const SizedBox(height: 20),

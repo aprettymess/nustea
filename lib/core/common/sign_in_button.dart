@@ -20,12 +20,13 @@ class SignInButton extends ConsumerWidget {
       padding: const EdgeInsets.all(18.0),
       child: ElevatedButton.icon(
         onPressed: () => signInWithGoogle(context, ref),
-        icon: Image.asset(Constants.googlePath, width: 45),
+        icon: Image.asset(
+          Constants.googlePath,
+          width: 35,
+        ),
         label: const Text(
           'Continue with Google',
-          style: TextStyle(
-            fontSize: 18,
-          ),
+          style: TextStyle(fontSize: 18),
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: Pallete.greyColor,
